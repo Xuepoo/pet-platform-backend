@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments (uv / venv)
+.venv/
+env/
+venv/
+ENV/
+
+# Sensitive Information
+.env
+.env.*
+!.env.example
+
+# Database & Migrations
+*.db
+*.sqlite3
+# 如果有本地测试产生的数据
+tests/data/
+
+# OS specific
+.DS_Store
+
+# logs 
+logs
+
+# IDE specific
+.idea
+.vscode
+
+# ruff
+ruff_cache/
+.ruff_cache/
+
