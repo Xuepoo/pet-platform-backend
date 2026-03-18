@@ -8,6 +8,10 @@ class UserBase(BaseModel):
     is_active: bool = True
     is_superuser: bool = False
     full_name: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    avatar: Optional[str] = None
+    bio: Optional[str] = None
 
 
 class UserCreate(UserBase):
@@ -20,6 +24,10 @@ class UserUpdate(BaseModel):
     is_superuser: Optional[bool] = None
     full_name: Optional[str] = None
     password: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    avatar: Optional[str] = None
+    bio: Optional[str] = None
 
 
 class UserInDBBase(UserBase):

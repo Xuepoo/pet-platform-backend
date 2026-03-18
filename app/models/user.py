@@ -11,6 +11,10 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
+    age = Column(Integer, nullable=True)
+    gender = Column(String, nullable=True)
+    avatar = Column(String, nullable=True)
+    bio = Column(String, nullable=True)
 
     pets = relationship("Pet", back_populates="owner")
     applications = relationship("Application", back_populates="user")

@@ -94,7 +94,27 @@ async def verify_system():
         except Exception as e:
             print(f"❌ List pets error: {e}")
 
-        # 6. Create Report
+        # 6. Upload Image
+        print("🖼️  Uploading an image...")
+        image_url = ""
+        try:
+            # Create a dummy image file if it doesn't exist
+            with open("test_image.png", "wb") as f:
+                f.write(b"fake image content")
+
+            files = {"file": ("test_image.png", open("test_image.png", "rb"), "image/png")}
+            resp = await client.post(f"{BASE_URL}/upload/", headers={"Authorization": f"Bearer {token}"}, files=files)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                image_url = data["url"]
+                print(f"✅ Image uploaded: {image_url}")
+            else:
+                print(f"❌ Upload failed: {resp.status_code} - {resp.text}")
+        except Exception as e:
+            print(f"❌ Upload error: {e}")
+
+        # 7. Create Report (with image)
         print("📢 Creating a lost pet report...")
         try:
             resp = await client.post(f"{BASE_URL}/reports/", headers=headers, json={
@@ -102,7 +122,8 @@ async def verify_system():
                 "description": "Lost cat",
                 "location": "Downtown",
                 "report_type": "lost",
-                "contact_info": "555-0123"
+                "contact_info": "555-0123",
+                "image_url": image_url
             })
             if resp.status_code == 200:
                 report = resp.json()
@@ -111,6 +132,27 @@ async def verify_system():
                 print(f"❌ Create report failed: {resp.status_code} - {resp.text}")
         except Exception as e:
             print(f"❌ Create report error: {e}")
+
+        # 8. Submit Adoption Application
+        print("📝 Submitting adoption application...")
+        try:
+            # Apply for the pet created in step 4 (pet_id)
+            if pet_id > 0:
+                resp = await client.post(f"{BASE_URL}/applications/", headers=headers, json={
+                    "pet_id": pet_id,
+                    "message": "I would love to adopt this pet!"
+                })
+                if resp.status_code == 200:
+                    app_data = resp.json()
+                    print(f"✅ Application submitted for Pet ID {pet_id} (App ID: {app_data['id']})")
+                elif resp.status_code == 400 and "already applied" in resp.text:
+                    print("⚠️ Already applied for this pet.")
+                else:
+                    print(f"❌ Application failed: {resp.status_code} - {resp.text}")
+            else:
+                print("⚠️ Skipping application: No pet created.")
+        except Exception as e:
+            print(f"❌ Application error: {e}")
 
     print("\n🎉 Verification Complete! System is operational.")
 
