@@ -4,7 +4,9 @@ This module defines the Report SQLAlchemy model for tracking
 lost and found pet reports.
 """
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -26,6 +28,8 @@ class Report(Base):
         image_url: Optional image URL of the pet.
         contact_info: Contact information for the reporter.
         user_id: Foreign key to the reporting user.
+        created_at: When the report was created.
+        updated_at: When the report was last updated.
         user: Relationship to the user.
     """
     
@@ -38,5 +42,7 @@ class Report(Base):
     image_url = Column(String, nullable=True)
     contact_info = Column(String)
     user_id = Column(Integer, ForeignKey("user.id"))
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="reports")
