@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
+from .pet import Pet
 
 
 class ApplicationBase(BaseModel):
@@ -27,7 +28,7 @@ class ApplicationInDBBase(ApplicationBase):
 
 
 class Application(ApplicationInDBBase):
-    pass
+    pet: Optional[Pet] = None
 
 
 class ApplicationInDB(ApplicationInDBBase):

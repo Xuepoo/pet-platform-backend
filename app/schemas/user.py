@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     is_superuser: bool = False
     full_name: Optional[str] = None
     age: Optional[int] = None
+    birthdate: Optional[str] = None
     gender: Optional[str] = None
     avatar: Optional[str] = None
     bio: Optional[str] = None
@@ -25,6 +26,7 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     password: Optional[str] = None
     age: Optional[int] = None
+    birthdate: Optional[str] = None
     gender: Optional[str] = None
     avatar: Optional[str] = None
     bio: Optional[str] = None

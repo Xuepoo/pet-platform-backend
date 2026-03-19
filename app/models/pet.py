@@ -33,7 +33,11 @@ class Pet(Base):
     age = Column(Integer)
     description = Column(String)
     status = Column(String, default="available")
+    gender = Column(String, nullable=True)
+    size = Column(String, nullable=True)
+    image_url = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("user.id"))
 
     owner = relationship("User", back_populates="pets")
+    favorited_by = relationship("PetFavorite", back_populates="pet")
     applications = relationship("Application", back_populates="pet")

@@ -1,8 +1,9 @@
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app import models, schemas
 from app.api import deps
@@ -18,6 +19,7 @@ async def read_pets(
     species: Optional[str] = None,
     breed: Optional[str] = None,
     status: Optional[str] = "available",
+    current_user: Optional[models.User] = Depends(deps.get_current_user_optional),
 ) -> Any:
     """
     Retrieve pets.
@@ -33,10 +35,83 @@ async def read_pets(
     query = query.offset(skip).limit(limit)
     result = await db.execute(query)
     pets = result.scalars().all()
+
+    # Check favorites if user is logged in
+    if current_user:
+        # Load user favorites
+        stmt = select(models.PetFavorite.pet_id).where(models.PetFavorite.user_id == current_user.id)
+        fav_result = await db.execute(stmt)
+        fav_ids = {row[0] for row in fav_result.all()}
+        
+        for pet in pets:
+            pet.is_favorited = pet.id in fav_ids
+    
     return pets
 
 
-@router.post("/", response_model=schemas.Pet)
+@router.post("/{pet_id}/favorite", response_model=bool)
+async def favorite_pet(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    pet_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Toggle favorite status for a pet.
+    """
+    # Check if pet exists
+    result = await db.execute(select(models.Pet).where(models.Pet.id == pet_id))
+    pet = result.scalars().first()
+    if not pet:
+        raise HTTPException(status_code=404, detail="Pet not found")
+
+    # Check if already favorited
+    stmt = select(models.PetFavorite).where(
+        models.PetFavorite.user_id == current_user.id,
+        models.PetFavorite.pet_id == pet_id
+    )
+    result = await db.execute(stmt)
+    favorite = result.scalars().first()
+
+    if favorite:
+        # Unfavorite
+        await db.delete(favorite)
+        await db.commit()
+        return False
+    else:
+        # Favorite
+        favorite = models.PetFavorite(user_id=current_user.id, pet_id=pet_id)
+        db.add(favorite)
+        await db.commit()
+        return True
+
+
+@router.get("/{pet_id}", response_model=schemas.Pet)
+async def read_pet(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    pet_id: int,
+    current_user: Optional[models.User] = Depends(deps.get_current_user_optional),
+) -> Any:
+    """
+    Get pet by ID.
+    """
+    result = await db.execute(select(models.Pet).where(models.Pet.id == pet_id))
+    pet = result.scalars().first()
+    if not pet:
+        raise HTTPException(status_code=404, detail="Pet not found")
+    
+    if current_user:
+        stmt = select(models.PetFavorite).where(
+            models.PetFavorite.user_id == current_user.id,
+            models.PetFavorite.pet_id == pet_id
+        )
+        fav_result = await db.execute(stmt)
+        if fav_result.scalars().first():
+            pet.is_favorited = True
+            
+    return pet
+
 async def create_pet(
     *,
     db: AsyncSession = Depends(deps.get_db),
@@ -51,22 +126,6 @@ async def create_pet(
     db.add(pet)
     await db.commit()
     await db.refresh(pet)
-    return pet
-
-
-@router.get("/{pet_id}", response_model=schemas.Pet)
-async def read_pet(
-    *,
-    db: AsyncSession = Depends(deps.get_db),
-    pet_id: int,
-) -> Any:
-    """
-    Get pet by ID.
-    """
-    result = await db.execute(select(models.Pet).where(models.Pet.id == pet_id))
-    pet = result.scalars().first()
-    if not pet:
-        raise HTTPException(status_code=404, detail="Pet not found")
     return pet
 
 

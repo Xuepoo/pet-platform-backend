@@ -27,7 +27,7 @@ async def create_sample_reports():
             {
                 "pet_name": "小白",
                 "report_type": "lost",
-                "description": "我家的小白猫走丢了！它是一只白色的英国短毛猫，大约2岁，脖子上戴着蓝色项圈。最后一次见到它是在公园附近。如果有人看到它，请联系我，非常感谢！",
+                "description": "我家的小白狗走丢了！它是一只白色的梗犬，大约2岁，脖子上戴着蓝色项圈。最后一次见到它是在公园附近。如果有人看到它，请联系我，非常感谢！",
                 "location": "北京市朝阳区望京公园",
                 "contact_info": "13800138001",
                 "image_url": "https://images.dog.ceo/breeds/terrier-kerryblue/n02093859_2225.jpg",

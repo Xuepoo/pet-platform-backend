@@ -10,6 +10,9 @@ class PetBase(BaseModel):
     age: Optional[int] = None
     description: Optional[str] = None
     status: Optional[str] = "available"  # available, adopted, pending
+    gender: Optional[str] = None
+    size: Optional[str] = None
+    image_url: Optional[str] = None
 
 
 class PetCreate(PetBase):
@@ -18,6 +21,9 @@ class PetCreate(PetBase):
     breed: str
     age: int
     description: str
+    gender: str
+    size: str
+    image_url: Optional[str] = None
 
 
 class PetUpdate(PetBase):
@@ -26,12 +32,12 @@ class PetUpdate(PetBase):
 
 class PetInDBBase(PetBase):
     id: int
-    owner_id: int
+    owner_id: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
 
 
 class Pet(PetInDBBase):
-    pass
+    is_favorited: bool = False
 
 
 class PetInDB(PetInDBBase):

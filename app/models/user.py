@@ -40,10 +40,12 @@ class User(Base):
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
     age = Column(Integer, nullable=True)
+    birthdate = Column(String, nullable=True)  # Store as ISO date string YYYY-MM-DD
     gender = Column(String, nullable=True)
     avatar = Column(String, nullable=True)
     bio = Column(String, nullable=True)
 
+    favorites = relationship("PetFavorite", back_populates="user")
     pets = relationship("Pet", back_populates="owner")
     applications = relationship("Application", back_populates="user")
     reports = relationship("Report", back_populates="user")
