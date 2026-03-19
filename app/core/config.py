@@ -1,3 +1,9 @@
+"""Application configuration settings.
+
+This module contains the Settings class that loads configuration
+from environment variables using pydantic-settings.
+"""
+
 from typing import List, Union
 
 from pydantic import AnyHttpUrl, validator
@@ -5,17 +11,32 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """Application settings loaded from environment variables.
+    
+    Attributes:
+        PROJECT_NAME: Name of the project displayed in API docs.
+        API_V1_STR: API version prefix for all routes.
+        BACKEND_CORS_ORIGINS: List of allowed CORS origins.
+        DATABASE_URL: PostgreSQL connection URL with asyncpg driver.
+        SECRET_KEY: Secret key for JWT token signing.
+        ALGORITHM: Algorithm used for JWT encoding.
+        ACCESS_TOKEN_EXPIRE_MINUTES: Token expiration time in minutes.
+        MINIO_ENDPOINT: MinIO server endpoint.
+        MINIO_ACCESS_KEY: MinIO access key.
+        MINIO_SECRET_KEY: MinIO secret key.
+        MINIO_BUCKET_NAME: Name of the bucket for pet images.
+        MINIO_SECURE: Whether to use HTTPS for MinIO.
+    """
+    
     PROJECT_NAME: str = "Pet Platform"
     API_V1_STR: str = "/api/v1"
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
-    # DATABASE_URL should be in the format: postgresql+asyncpg://user:password@host:port/db
     DATABASE_URL: str
     SECRET_KEY: str = "supersecretkey"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-    # Minio Configuration
     MINIO_ENDPOINT: str = "minio:9000"
     MINIO_ACCESS_KEY: str = "minioadmin"
     MINIO_SECRET_KEY: str = "minioadmin"

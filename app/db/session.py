@@ -1,3 +1,9 @@
+"""Database session configuration.
+
+This module sets up the async SQLAlchemy engine and session factory
+for database operations.
+"""
+
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.core.config import settings

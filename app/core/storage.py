@@ -1,3 +1,9 @@
+"""MinIO object storage client configuration.
+
+This module initializes the MinIO client for file uploads
+and object storage operations.
+"""
+
 from minio import Minio
 from app.core.config import settings
 
