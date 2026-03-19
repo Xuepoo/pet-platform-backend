@@ -90,10 +90,23 @@ backend/
 │   ├── core/         # Config, security, database setup
 │   ├── models/       # SQLAlchemy database models
 │   ├── schemas/      # Pydantic schemas for request/response
-│   ├── services/     # Business logic layer
+│   ├── services/     # Business logic services
 │   └── main.py       # Application entry point
+├── scripts/          # Utility scripts (seeding, maintenance, manual tests)
 ├── tests/            # Pytest test suite
-├── verify_system.py  # E2E verification script
 ├── pyproject.toml    # Project dependencies and config
 └── uv.lock           # Dependency lock file
+```
+
+## Utility Scripts
+
+The `scripts/` directory contains useful tools for managing the application:
+
+- `reseed_data.py`: Resets and seeds the database with initial data.
+- `create_test_users.py`: Creates test users for development.
+- `verify_system.py`: Checks system health and configuration.
+
+To run a script:
+```bash
+uv run python scripts/reseed_data.py
 ```
